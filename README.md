@@ -94,7 +94,6 @@ int main()
         else {
             std::cerr << xorstr_("Failed to save the file.") << std::endl;
         }
-        */
     }
     else {
         std::cerr << aurora.result.response << std::endl;
