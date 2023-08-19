@@ -16,6 +16,12 @@ To use the x86 version of the loader, download the curl and replace the current 
 
 ### How to Use the C++ API
 
+# Setting up Aurora
+
+```cpp
+Aurora aurora(xorstr_("name"), xorstr_("secret"), xorstr_("hash"), xorstr_("version"), xorstr_("https://aurora-licensing.pro/api/"));
+```
+
 ```cpp
 #include <Windows.h>
 #include <iostream>
