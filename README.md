@@ -2,15 +2,9 @@
 
 ![Aurora Logo](/logo.png)
 
-Aurora is a licensing and authentication system designed to help developers manage software licenses for their applications. It provides secure license validation, user authentication, and subscription management services.
-
 ## Purpose
 
-For the implementation of the x86 iteration of the loader, please follow these steps:
-1) Download the compressed zip file for 'curl'.
-2) Replace the existing 'curl' version with the newly downloaded one.
-3) Modify the build configuration from x64 to x86.
-4) Transition the debug mode to the release mode.
+Aurora is a licensing and authentication system designed to help developers manage software licenses for their applications. It provides secure license validation, user authentication, and subscription management services.
 
 ## C++ API
 
@@ -18,7 +12,7 @@ The C++ API provided by Aurora allows developers to integrate the licensing and 
 
 ## Utilizing the x86 Illustration
 
-To use the x86 version of the loader, download the curl zip and replace the old one with that one then change the build to x86 from x64 and debug to release mode.
+To use the x86 version of the loader, download the curl and replace the current curl files with the newly compiled files, then change the build to x86 from x64 and debug to release mode.
 
 ### How to Use the C++ API
 
