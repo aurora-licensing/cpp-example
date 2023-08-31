@@ -83,6 +83,13 @@ int main()
         std::cout << xorstr_("HWID: ") << aurora.result.response << std::endl;
     }
 
+    // Retrun the ip address for current license
+    aurora.getIP(license);
+    if (aurora.result.valid == true) {
+        // If the license hwid request was successful, display the information
+        std::cout << xorstr_("IP Address: ") << aurora.result.response << std::endl;
+    }
+
     // Get a variable message using a secret
     aurora.getVarMessage(xorstr_("secret"));
     if (aurora.result.valid == true) {
@@ -118,19 +125,12 @@ int main()
     }
 
 
-    // Send a webhook to your discord server with ease view example below also to see logs with ip address also
+    // Send a webhook to your discord server with ease, you could use the getIP function also to for logging if debugger triggered ect.
     aurora.sendWebhook(botName, botUrl, xorstr_("User Login"), xorstr_("License: `") + license + xorstr_("`"));
     if (aurora.result.valid == true) {
         // If the webhook was successfully sent, display the response message
         std::cout << aurora.result.response << std::endl;
     }
-
-    // Example of how to retrun users ip address, login notification or debug detection information
-    // get_ip_address(false) without encoding use get_ip_address(true) to encode the ip address (base64) https://www.base64decode.org/
-    //std::cout << utils::get_ip_address(false) << std::endl;
-
-    // You can also send users ip address via webhook either standard format or using encoded message
-    //webHook(xorstr_("Aurora"), xorstr_("https://aurora-licensing.pro/images/logo.png"), xorstr_("New Login"), xorstr_("License: `") + license + xorstr_("`\nIP Address: `") + utils::get_ip_address(false));
 
     // Example on banning license, example if debuging ect
     //aurora.banLicense(license);
