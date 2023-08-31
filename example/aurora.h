@@ -504,4 +504,34 @@ public:
             handleError("An error occurred while fetching used date: " + std::string(e.what()));
         }
     }
+
+    void getIP(const std::string& license) {
+        try {
+            json params = {
+                { xorstr_("action"), xorstr_("get_license_ip") },
+                { xorstr_("name"), name },
+                { xorstr_("secret"), secret },
+                { xorstr_("hash"), hash },
+                { xorstr_("version"), version },
+                { xorstr_("license"), license }
+            };
+
+            std::string response = sendGetRequest(xorstr_("/index.php"), params);
+
+            // Parse JSON response
+            json jsonResponse = json::parse(response);
+
+            if (jsonResponse.find(xorstr_("error")) != jsonResponse.end()) {
+                result.valid = false;
+                result.response = jsonResponse[xorstr_("error")].get<std::string>();
+            }
+            else {
+                result.valid = true;
+                result.response = jsonResponse[xorstr_("used_date")].get<std::string>();
+            }
+        }
+        catch (const std::exception& e) {
+            handleError("An error occurred while fetching users ip address: " + std::string(e.what()));
+        }
+    }
 };
