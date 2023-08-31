@@ -53,20 +53,6 @@ namespace utils
         return std::string(psz_sid_str);
     }
 
-    std::string get_ip_address(bool encoded) {
-        std::string return_ip;
-
-        if (encoded) {
-            std::string ip_address = download_string("https://aurora-licensing.pro/api/ip_address.php");
-            return_ip = base_64_encode(reinterpret_cast<const unsigned char*>(ip_address.c_str()), ip_address.length());
-        }
-        else if (!encoded) {
-            return_ip = download_string("https://aurora-licensing.pro/api/ip_address.php");
-        }
-
-        return return_ip;
-    }
-
     std::string read_license(const std::string& filename)
     {
         std::ifstream inFile(filename);
