@@ -20,7 +20,6 @@ namespace utils {
 	std::string base_64_encode(const unsigned char* data, size_t length);
 
 	std::string get_hwid();
-	std::string get_ip_address(bool encoded);
 
 	std::string read_license(const std::string& filename);
 	void save_license(const std::string& licenseKey, const std::string& filename);
