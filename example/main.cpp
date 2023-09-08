@@ -124,6 +124,19 @@ int main()
         std::cerr << aurora.result.response << std::endl;
     }
 
+    // Create a vector to store the unique downloaded file content as bytes
+    std::vector<uint8_t> bytes;
+
+    // If you are for example using custom builds of a cheat or driver you can use the unqiue license links feature to fetch the links unqiue downloads see example below.
+    aurora.uniqueDownload("1", license, bytes);
+
+    // Check to see if the unqiue license response was successfull if so do something with the link below.
+    if (aurora.result.valid) {
+        // Use bytes to do something
+    }
+    else {
+        std::cout << "Error: " << aurora.result.response << std::endl;
+    }
 
     // Send a webhook to your discord server with ease, you could use the getIP function also to for logging if debugger triggered ect.
     aurora.sendWebhook(botName, botUrl, xorstr_("User Login"), xorstr_("License: `") + license + xorstr_("`"));
