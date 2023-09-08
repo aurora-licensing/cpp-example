@@ -352,6 +352,91 @@ public:
         }
     }
 
+    void uniqueDownload(const std::string& id, const std::string& license, std::vector<uint8_t>& fileData) {
+        try {
+            if (id != xorstr_("1") && id != xorstr_("2")) {
+                handleError(xorstr_("Invalid ID"));
+                return;
+            }
+
+            json params = {
+                { xorstr_("action"), xorstr_("unique_download") },
+                { xorstr_("name"), name },
+                { xorstr_("secret"), secret },
+                { xorstr_("hash"), hash },
+                { xorstr_("version"), version },
+                { xorstr_("license"), license },
+                { xorstr_("id"), id }
+            };
+
+            std::string response = sendGetRequest(xorstr_("/index.php"), params);
+
+            // Parse JSON response
+            json jsonResponse = json::parse(response);
+
+            if (jsonResponse.find(xorstr_("error")) != jsonResponse.end()) {
+                result.valid = false;
+                result.response = jsonResponse[xorstr_("error")].get<std::string>();
+                return;
+            }
+
+            // Check if the response contains a valid download link
+            if (jsonResponse.find(xorstr_("download_link")) == jsonResponse.end()) {
+                result.valid = false;
+                result.response = xorstr_("Invalid or missing download link in the response.");
+                return;
+            }
+
+            // Get the download link from the response
+            std::string downloadLink;
+
+            if (jsonResponse[xorstr_("download_link")].is_string()) {
+                downloadLink = jsonResponse[xorstr_("download_link")].get<std::string>();
+            }
+            else if (jsonResponse[xorstr_("download_link")].is_number()) {
+                // Convert the numeric value to a string
+                downloadLink = std::to_string(jsonResponse[xorstr_("download_link")].get<int>());
+            }
+            else {
+                result.valid = false;
+                result.response = xorstr_("Invalid format for download link in the response.");
+                return;
+            }
+
+            CURL* curl = curl_easy_init();
+            if (!curl) {
+                std::cerr << xorstr_("Failed to initialize cURL") << std::endl;
+                result.valid = false;
+                result.response = xorstr_("Failed to initialize cURL.");
+                return;
+            }
+
+            // Set up curl options for downloading the file
+            curl_easy_setopt(curl, CURLOPT_URL, downloadLink.c_str());
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteToBufferCallback);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &fileData);
+
+            // Perform the request to download the file
+            CURLcode res = curl_easy_perform(curl);
+
+            // Check for errors during the download
+            if (res != CURLE_OK) {
+                result.valid = false;
+                result.response = xorstr_("Error while downloading file.");
+            }
+            else {
+                result.valid = true;
+                result.response = xorstr_("File successfully downloaded.");
+            }
+
+            // Clean up curl
+            curl_easy_cleanup(curl);
+        }
+        catch (const std::exception& e) {
+            handleError(xorstr_("An error occurred during unique file download: ") + std::string(e.what()));
+        }
+    }
+
     void sendWebhook(const std::string& botName, const std::string& iconUrl, const std::string& embedTitle, const std::string& message) {
         try {
             json params = {
