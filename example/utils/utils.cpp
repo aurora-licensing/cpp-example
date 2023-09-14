@@ -53,6 +53,12 @@ namespace utils
         return std::string(psz_sid_str);
     }
 
+    bool file_exists(const std::string& filename)
+    {
+        std::ifstream file(filename);
+        return file.good();
+    }
+
     std::string read_license(const std::string& filename)
     {
         std::ifstream inFile(filename);
@@ -73,98 +79,5 @@ namespace utils
             outFile << licenseKey;
             outFile.close();
         }
-    }
-
-    std::string replace_all(std::string subject, const std::string& search, const std::string& replace) {
-        size_t pos = 0;
-
-        while ((pos = subject.find(search, pos)) != std::string::npos) {
-            subject.replace(pos, search.length(), replace);
-            pos += replace.length();
-        }
-
-        return subject;
-    }
-
-    std::string download_string(std::string url) {
-        HINTERNET interwebs = InternetOpenA("Mozilla/5.0", INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, NULL);
-        HINTERNET urlFile;
-
-        std::string rtn;
-
-        if (interwebs) {
-            urlFile = InternetOpenUrlA(interwebs, url.c_str(), NULL, NULL, NULL, NULL);
-
-            if (urlFile) {
-                char buffer[2000];
-                DWORD bytesRead;
-
-                do {
-                    InternetReadFile(urlFile, buffer, 2000, &bytesRead);
-                    rtn.append(buffer, bytesRead);
-                    memset(buffer, 0, 2000);
-                } while (bytesRead);
-
-                InternetCloseHandle(interwebs);
-                InternetCloseHandle(urlFile);
-
-                std::string p = replace_all(rtn, "|n", "\r\n");
-                return p;
-            }
-        }
-
-        InternetCloseHandle(interwebs);
-
-        std::string p = replace_all(rtn, "|n", "\r\n");
-        return p;
-    }
-
-    std::string base_64_encode(const unsigned char* data, size_t length)
-    {
-        std::string encoded;
-        int i = 0;
-        int j = 0;
-        unsigned char char_array_3[3];
-        unsigned char char_array_4[4];
-
-        while (length--) {
-            char_array_3[i++] = *(data++);
-            if (i == 3) {
-                char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
-                char_array_4[1] = ((char_array_3[0] & 0x03) << 4) +
-                    ((char_array_3[1] & 0xf0) >> 4);
-                char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) +
-                    ((char_array_3[2] & 0xc0) >> 6);
-                char_array_4[3] = char_array_3[2] & 0x3f;
-
-                for (i = 0; i < 4; i++) {
-                    encoded += encode[char_array_4[i]];
-                }
-                i = 0;
-            }
-        }
-
-        if (i) {
-            for (j = i; j < 3; j++) {
-                char_array_3[j] = '\0';
-            }
-
-            char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
-            char_array_4[1] = ((char_array_3[0] & 0x03) << 4) +
-                ((char_array_3[1] & 0xf0) >> 4);
-            char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) +
-                ((char_array_3[2] & 0xc0) >> 6);
-            char_array_4[3] = char_array_3[2] & 0x3f;
-
-            for (j = 0; j < i + 1; j++) {
-                encoded += encode[char_array_4[j]];
-            }
-
-            while (i++ < 3) {
-                encoded += '=';
-            }
-        }
-
-        return encoded;
     }
 }
