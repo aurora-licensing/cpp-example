@@ -50,6 +50,15 @@ int main() {
         utils::save_license(license, xorstr_("C:\\ProgramData\\key.txt"));
     }
 
+    // check to see if the session is active, login check. note: use this function before injecting or using the download function to make sure user is still logged in.
+    aurora.checkSession(license);
+    if (aurora.result.valid == false) {
+        // if the session is not valid return error
+        std::cerr << aurora.result.response << std::endl;
+        Sleep(1500);
+        exit(0);
+    }
+
     // check the expiry date of the license key
     aurora.checkLicenseExpiry(license);
     if (aurora.result.valid == true) {
@@ -84,6 +93,14 @@ int main() {
     aurora.getIP(license);
     if (aurora.result.valid == true) {
         std::cout << xorstr_("IP Address: ") << aurora.result.response << std::endl;
+    }
+
+    // option to kill session on clean up or logout, check reponse if needed.
+    aurora.killSession(license);
+    if (aurora.result.valid == true) {
+        std::cout << aurora.result.response << std::endl;
+        Sleep(1500);
+        exit(0);
     }
 
     return 0;
