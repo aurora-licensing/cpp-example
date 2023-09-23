@@ -169,6 +169,58 @@ public:
         }
     }
 
+    void checkSession(const std::string& sessionId) {
+        try {
+            json params = {
+                { xorstr_("action"), xorstr_("check_session") },
+                { xorstr_("id"), sessionId }
+            };
+
+            std::string response = sendGetRequest(xorstr_("/index.php"), params);
+
+            // Parse JSON response
+            json jsonResponse = json::parse(response);
+
+            if (jsonResponse.find(xorstr_("error")) != jsonResponse.end()) {
+                result.valid = false;
+                result.response = jsonResponse[xorstr_("error")].get<std::string>();
+            }
+            else {
+                result.valid = true;
+                result.response = jsonResponse[xorstr_("message")].get<std::string>();
+            }
+        }
+        catch (const std::exception& e) {
+            handleError("An error occurred while checking the session: " + std::string(e.what()));
+        }
+    }
+
+    void killSession(const std::string& sessionId) {
+        try {
+            json params = {
+                { xorstr_("action"), xorstr_("kill_session") },
+                { xorstr_("id"), sessionId }
+            };
+
+            std::string response = sendGetRequest(xorstr_("/index.php"), params);
+
+            // Parse JSON response
+            json jsonResponse = json::parse(response);
+
+            if (jsonResponse.find(xorstr_("error")) != jsonResponse.end()) {
+                result.valid = false;
+                result.response = jsonResponse[xorstr_("error")].get<std::string>();
+            }
+            else {
+                result.valid = true;
+                result.response = jsonResponse[xorstr_("message")].get<std::string>();
+            }
+        }
+        catch (const std::exception& e) {
+            handleError("An error occurred while killing the session: " + std::string(e.what()));
+        }
+    }
+
     void checkLicenseExpiry(const std::string& license) {
         try {
             json params = {
