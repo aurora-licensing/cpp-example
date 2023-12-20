@@ -404,13 +404,8 @@ public:
         }
     }
 
-    void uniqueDownload(const std::string& id, const std::string& license, std::vector<uint8_t>& fileData) {
+    void uniqueDownloadToBytes(const std::string& license, const std::string& fileSecret, std::vector<uint8_t>& fileData) {
         try {
-            if (id != xorstr_("1") && id != xorstr_("2")) {
-                handleError(xorstr_("Invalid ID"));
-                return;
-            }
-
             json params = {
                 { xorstr_("action"), xorstr_("unique_download") },
                 { xorstr_("name"), name },
@@ -418,7 +413,7 @@ public:
                 { xorstr_("hash"), hash },
                 { xorstr_("version"), version },
                 { xorstr_("license"), license },
-                { xorstr_("id"), id }
+                { xorstr_("file_name"), fileSecret }
             };
 
             std::string response = sendGetRequest(xorstr_("/index.php"), params);
@@ -440,20 +435,7 @@ public:
             }
 
             // Get the download link from the response
-            std::string downloadLink;
-
-            if (jsonResponse[xorstr_("download_link")].is_string()) {
-                downloadLink = jsonResponse[xorstr_("download_link")].get<std::string>();
-            }
-            else if (jsonResponse[xorstr_("download_link")].is_number()) {
-                // Convert the numeric value to a string
-                downloadLink = std::to_string(jsonResponse[xorstr_("download_link")].get<int>());
-            }
-            else {
-                result.valid = false;
-                result.response = xorstr_("Invalid format for download link in the response.");
-                return;
-            }
+            std::string downloadLink = jsonResponse[xorstr_("download_link")].get<std::string>();
 
             CURL* curl = curl_easy_init();
             if (!curl) {
@@ -485,7 +467,7 @@ public:
             curl_easy_cleanup(curl);
         }
         catch (const std::exception& e) {
-            handleError(xorstr_("An error occurred during unique file download: ") + std::string(e.what()));
+            handleError("An error occurred during file download: " + std::string(e.what()));
         }
     }
 
